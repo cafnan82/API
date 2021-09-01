@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>API</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+    <h2>API</h2>
+    <select id="uselect">
+      <option selected>Open this select menu</option>
+      <% users.forEach(function(u){%>
+        <option  value="<%= u.userid %>"> <%= u.name %> </option>
+      <% }) %>
+    </select>
+    <input type="submit" name="like" value="likes" onclick="like()">
+    <input type="submit" name="comment" value="comments" onclick="comment()">
+    <br />
+    <br>
+    <div id="result"></div>
+</body>
+<script type="text/javascript">
+async function like(){
+  var uid = await $('#uselect').find(":selected").val();
+  if(uid == undefined || uid == null || uid == '')
+  {
+    alert("Please select a user!!!");
+  }
+  $.ajax({
+      url: window.location+"/user/likes/"+uid,
+      type: "GET",
+      success: function(res) {
+           console.log("success");
+           if(res.msg=='success'){
+            if(res.data==undefined || res.data==null || res.data=='') {  
+            alert("Something went wrong!!!");
+            } else {
+              let val = JSON.stringify(res.data);
+              console.log(val);
+              $('#result').children().remove().end();
+              $('#result').text(val);
+            }
+           } else{
+             alert("Something went wrong!!!");
+           }
+      },
+      error: function() {
+          console.log("error")
+      }
+  });
+}
+
+async function comment(){
+  var uid = await $('#uselect').find(":selected").val();
+  if(uid == undefined || uid == null || uid == '')
+  {
+    alert("Please select a user!!!");
+  }
+  $.ajax({
+      url: window.location+"/user/comments/"+uid,
+      type: "GET",
+      success: function(res) {
+           console.log("success");
+           if(res.msg=='success'){
+            if(res.data==undefined || res.data==null || res.data=='') {  
+            alert("Please select a user!!!");
+            } else {
+              let val = JSON.stringify(res.data);
+              console.log(val);
+              $('#result').children().remove().end();
+              $('#result').text(val);
+            }
+           } else{
+             alert("Something went wrong!!!");
+           }
+      },
+      error: function() {
+          console.log("error")
+      }
+  });
+}
+</script>
+</html>
